@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: rfm-deployment
-        image: wows/rfm-service:0.1.6
+        image: wows/rfm-service:0.1.7
         env:
           - name: DB_HOST
             value: "3.36.102.51"
