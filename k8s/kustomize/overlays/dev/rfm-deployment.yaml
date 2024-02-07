@@ -23,7 +23,7 @@ spec:
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: dev-secret
+                name: dev-rfm-secret
                 key: DB_PASSWORD
           - name: DB_USER
             value: cb2
