@@ -22,10 +22,12 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	go func() {
-		if err := db.Ping(); err != nil {
-			log.Println(err)
+		for {
+			if err := db.Ping(); err != nil {
+				log.Println(err)
+			}
+			time.Sleep(5 * time.Second)
 		}
-		time.Sleep(5 * time.Second)
 	}()
 	repo := NewMysqlRepository(db)
 	rfmBuilder := NewRfmBuilder(repo)
