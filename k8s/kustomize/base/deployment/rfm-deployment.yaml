@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rfm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rfm-deployment
+  template:
+    metadata:
+      labels:
+        app: rfm-deployment
+    spec:
+      imagePullSecrets:
+        - name: chris-token
+      containers:
+      - name: rfm-deployment
+        image: wows/rfm-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080

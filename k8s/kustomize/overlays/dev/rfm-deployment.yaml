@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rfm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rfm-deployment
+  template:
+    metadata:
+      labels:
+        app: rfm-deployment
+    spec:
+      containers:
+      - name: rfm-deployment
+        image: wows/rfm-service:0.1.0
+        env:
+          - name: DB_HOST
+            value: "3.36.102.51"
+          - name: DB_NAME
+            value: "katsu"
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: dev-secret
+                key: DB_PASSWORD
+          - name: DB_USER
+            value: cb2
+          - name: DB_PORT
+            value: "3306"
+
