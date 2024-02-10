@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -38,6 +39,6 @@ func (r *RFMHandler) GetClass(c *gin.Context) {
 	class := StringToClass(sClass)
 	data := rfm.GetClass(class)
 	b := ToEmailFormat(data)
-
+	log.Println("class : ", class, "len : ", len(b))
 	c.JSON(http.StatusOK, b)
 }

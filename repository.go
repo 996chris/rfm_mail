@@ -179,6 +179,7 @@ func (m *mysqlRepository) GetAllNoneDepositCustomer() ([]Customer, error) {
 		WHERE m.status = 1
 		and m.email is not null
 		and m.email != ''
+		and FROM_UNIXTIME(m.created_at) BETWEEN '2024-01-01' AND '2024-01-23'
 		GROUP BY user_id
 		having COALESCE(count(dl.id),0) = 0;`)
 	if err != nil {
