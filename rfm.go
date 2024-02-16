@@ -55,8 +55,14 @@ func NewRFM[T Customer](data []T) RFM[T] {
 	return r
 }
 func (r *rfm[T]) initFactor() {
-	f := r.data[0].GetFactorName()
 
+	var f []FactorProperty
+
+	if len(r.data) <= 0 {
+		f = make([]FactorProperty, 0)
+	} else {
+		f = r.data[0].GetFactorName()
+	}
 	for i := 0; i < len(f); i++ {
 		factor := f[i]
 		r.factorAvg[factor.Name] = r.getAverageByFactor(factor)
@@ -107,7 +113,13 @@ func (r *rfm[T]) getCustomerScore(c T) float64 {
 }
 func (r *rfm[T]) getScoreStandardDeviation() float64 {
 	var total []float64
-	f := r.data[0].GetFactorName()
+	var f []FactorProperty
+
+	if len(r.data) <= 0 {
+		f = make([]FactorProperty, 0)
+	} else {
+		f = r.data[0].GetFactorName()
+	}
 	for _, v := range r.data {
 		var score float64
 		for i := 0; i < len(f); i++ {
@@ -120,7 +132,14 @@ func (r *rfm[T]) getScoreStandardDeviation() float64 {
 }
 func (r *rfm[T]) getScoreAvg() float64 {
 	var score float64
-	f := r.data[0].GetFactorName()
+	var f []FactorProperty
+
+	if len(r.data) <= 0 {
+		f = make([]FactorProperty, 0)
+	} else {
+		f = r.data[0].GetFactorName()
+	}
+
 	for _, v := range r.data {
 		for i := 0; i < len(f); i++ {
 			score += r.getCustomerScoreByFactor(v, f[i])

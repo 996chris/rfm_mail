@@ -1,8 +1,10 @@
 package main
 
+import "time"
+
 type RFMBuilder interface {
-	BuildDepositedRFM() (RFM[Customer], error)
-	BuildNoneDepositedRFM() (RFM[Customer], error)
+	BuildDepositedRFM(start time.Time, end time.Time) (RFM[Customer], error)
+	BuildNoneDepositedRFM(start time.Time, end time.Time) (RFM[Customer], error)
 }
 type rfmBuilder struct {
 	repo MysqlRepository
@@ -16,8 +18,8 @@ func NewRfmBuilder(repo MysqlRepository) RFMBuilder {
 	return r
 }
 
-func (r *rfmBuilder) BuildDepositedRFM() (RFM[Customer], error) {
-	c, err := r.repo.GetAllDepositCustomer()
+func (r *rfmBuilder) BuildDepositedRFM(start time.Time, end time.Time) (RFM[Customer], error) {
+	c, err := r.repo.GetDepositCustomer(start, end)
 	if err != nil {
 		return nil, err
 	}
@@ -27,8 +29,8 @@ func (r *rfmBuilder) BuildDepositedRFM() (RFM[Customer], error) {
 
 }
 
-func (r *rfmBuilder) BuildNoneDepositedRFM() (RFM[Customer], error) {
-	c, err := r.repo.GetAllNoneDepositCustomer()
+func (r *rfmBuilder) BuildNoneDepositedRFM(start time.Time, end time.Time) (RFM[Customer], error) {
+	c, err := r.repo.GetNoneDepositCustomer(start, end)
 	if err != nil {
 		return nil, err
 	}

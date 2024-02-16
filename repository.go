@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"reflect"
+	"time"
 )
 
 type FactorProperty struct {
@@ -39,8 +40,8 @@ type NoneDepositCustomer struct {
 	TotalBetTime  float64 `json:"total_bet_time"`
 }
 type MysqlRepository interface {
-	GetAllDepositCustomer() ([]Customer, error)
-	GetAllNoneDepositCustomer() ([]Customer, error)
+	GetDepositCustomer(start time.Time, end time.Time) ([]Customer, error)
+	GetNoneDepositCustomer(start time.Time, end time.Time) ([]Customer, error)
 }
 type mysqlRepository struct {
 	db *sql.DB
@@ -112,7 +113,7 @@ func (d NoneDepositCustomer) GetFactorName() []FactorProperty {
 	}
 	return f
 }
-func (m *mysqlRepository) GetAllDepositCustomer() ([]Customer, error) {
+func (m *mysqlRepository) GetDepositCustomer(start time.Time, end time.Time) ([]Customer, error) {
 
 	row, err := m.db.Query(`select 
 	m.id as user_id,
@@ -125,9 +126,10 @@ func (m *mysqlRepository) GetAllDepositCustomer() ([]Customer, error) {
 	left join katsu.deposit_log as dl
 	on dl.member_id = m.id
 	where m.status = 1 and m.email is not null and m.email != ''
+	and FROM_UNIXTIME(m.created_at) BETWEEN ? AND ?
 	group by user_id
 	having total_deposit_time != 0
-	order by user_id;`)
+	order by user_id;`, start.Format(time.DateOnly), end.Format(time.DateOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +146,7 @@ func (m *mysqlRepository) GetAllDepositCustomer() ([]Customer, error) {
 
 }
 
-func (m *mysqlRepository) GetAllNoneDepositCustomer() ([]Customer, error) {
+func (m *mysqlRepository) GetNoneDepositCustomer(start time.Time, end time.Time) ([]Customer, error) {
 
 	row, err := m.db.Query(`SELECT
 			m.id as user_id,
@@ -179,9 +181,9 @@ func (m *mysqlRepository) GetAllNoneDepositCustomer() ([]Customer, error) {
 		WHERE m.status = 1
 		and m.email is not null
 		and m.email != ''
-		and FROM_UNIXTIME(m.created_at) BETWEEN '2023-12-01' AND '2023-12-31'
+		and FROM_UNIXTIME(m.created_at) BETWEEN ? AND ?
 		GROUP BY user_id
-		having COALESCE(count(dl.id),0) = 0;`)
+		having COALESCE(count(dl.id),0) = 0;`, start.Format(time.DateOnly), end.Format(time.DateOnly))
 	if err != nil {
 		return nil, err
 	}
